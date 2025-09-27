@@ -11,10 +11,14 @@
             "id": "a2ae0e05136c66c4",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Idea.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "Idea"
             }
           }
         ]
@@ -163,5 +167,7 @@
     }
   },
   "active": "a2ae0e05136c66c4",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "fsdfsdf.md"
+  ]
 }
