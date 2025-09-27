@@ -22,17 +22,17 @@
             }
           },
           {
-            "id": "05d12e4cd4d46904",
+            "id": "1ec48f1cae218773",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Tech Stack.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Tech Stack"
+              "title": "README"
             }
           }
         ],
@@ -181,9 +181,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "05d12e4cd4d46904",
+  "active": "1ec48f1cae218773",
   "lastOpenFiles": [
     "Idea.md",
+    "README.md",
     "Tech Stack.md",
     "fsdfsdf.md"
   ]
