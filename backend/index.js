@@ -23,7 +23,6 @@ app.get("/", (req, res) => {
   `);
 });
 
-
 // --- Suggest Route Endpoint ---
 app.post("/suggest-route", async (req, res) => {
   try {
@@ -40,12 +39,20 @@ app.post("/suggest-route", async (req, res) => {
       params: {
         location: `${startLat},${startLng}`,
         radius: range,
-        type: "restaurant",
+        type: "restaurant", // Initial search type
         key: GOOGLE_API_KEY,
       },
     });
 
-    const restaurants = placesResp.data.results.slice(0, 5); // limit to 5
+    // Sort so that places with 'restaurant' in types appear first
+    const sortedPlaces = placesResp.data.results.sort((a, b) => {
+      const aIsRestaurant = a.types?.includes("restaurant") ? 1 : 0;
+      const bIsRestaurant = b.types?.includes("restaurant") ? 1 : 0;
+      return bIsRestaurant - aIsRestaurant;
+    });
+
+    // Take the top 5 sorted results
+    const restaurants = sortedPlaces.slice(0, 5);
 
     // Step 2: For each restaurant, get route
     const results = [];
