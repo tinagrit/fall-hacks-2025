@@ -12,7 +12,15 @@ const DEFAULT_START = { lat: 49.2827, lng: -123.1207 }; // Vancouver
 
 // --- Root Endpoint ---
 app.get("/", (req, res) => {
-  res.send("Welcome to the route suggestion API!");
+  res.send(`
+    <h1>Welcome to the Route Suggestion API!</h1>
+    <p>Default starting location:</p>
+    <ul>
+      <li>Latitude: ${DEFAULT_START.lat}</li>
+      <li>Longitude: ${DEFAULT_START.lng}</li>
+    </ul>
+    <p>Use <code>POST /suggest-route</code> with JSON {lat, lng, range} to try it out.</p>
+  `);
 });
 
 // --- Suggest Route Endpoint ---
@@ -31,12 +39,20 @@ app.post("/suggest-route", async (req, res) => {
       params: {
         location: `${startLat},${startLng}`,
         radius: range,
-        type: "restaurant",
+        type: "restaurant", // Initial search type
         key: GOOGLE_API_KEY,
       },
     });
 
-    const restaurants = placesResp.data.results.slice(0, 5); // limit to 5
+    // Sort so that places with 'restaurant' in types appear first
+    const sortedPlaces = placesResp.data.results.sort((a, b) => {
+      const aIsRestaurant = a.types?.includes("restaurant") ? 1 : 0;
+      const bIsRestaurant = b.types?.includes("restaurant") ? 1 : 0;
+      return bIsRestaurant - aIsRestaurant;
+    });
+
+    // Take the top 5 sorted results
+    const restaurants = sortedPlaces.slice(0, 5);
 
     // Step 2: For each restaurant, get route
     const results = [];
