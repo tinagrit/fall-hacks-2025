@@ -1,4 +1,3 @@
-// index.js
 require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
@@ -11,7 +10,12 @@ const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 // Default location (for demo fallback)
 const DEFAULT_START = { lat: 49.2827, lng: -123.1207 }; // Vancouver
 
-// --- Endpoint ---
+// --- Root Endpoint ---
+app.get("/", (req, res) => {
+  res.send("Welcome to the route suggestion API!");
+});
+
+// --- Suggest Route Endpoint ---
 app.post("/suggest-route", async (req, res) => {
   try {
     let { lat, lng, range } = req.body;
