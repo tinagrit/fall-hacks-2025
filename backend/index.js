@@ -12,8 +12,17 @@ const DEFAULT_START = { lat: 49.2827, lng: -123.1207 }; // Vancouver
 
 // --- Root Endpoint ---
 app.get("/", (req, res) => {
-  res.send("Welcome to the route suggestion API!");
+  res.send(`
+    <h1>Welcome to the Route Suggestion API!</h1>
+    <p>Default starting location:</p>
+    <ul>
+      <li>Latitude: ${DEFAULT_START.lat}</li>
+      <li>Longitude: ${DEFAULT_START.lng}</li>
+    </ul>
+    <p>Use <code>POST /suggest-route</code> with JSON {lat, lng, range} to try it out.</p>
+  `);
 });
+
 
 // --- Suggest Route Endpoint ---
 app.post("/suggest-route", async (req, res) => {
