@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigBackRun</title>
+
+    <link rel="stylesheet" href="./styles/ui.css">
+
+    <link rel="stylesheet" href="./leaflet/leaflet.css">
+    <script src="./leaflet/leaflet.js"></script>
+    <script src="./leaflet/leaflet.ajax.js"></script> <!-- from https://github.com/calvinmetcalf/leaflet-ajax -->
+</head>
+<body>
+    <div id="bg">
+        <div id="map"></div>
+        <div id="mainCircle"></div>
+    </div>
+
+    <div id="topbar">
+        <div class="leftbar">
+            <div class="floatingButtonTop">
+                <img src="./icons/hamburger.svg" alt="Menu">
+            </div>
+            <div class="floatingButtonTop">
+                <img class="small" src="./icons/user.svg" alt="Profile">
+            </div>
+        </div>
+        <div class="streak">
+            <img src="./icons/fire.svg" alt="Fire">
+            <span id="streakValue">1</span>
+        </div>
+    </div>
+
+    <div id="middlebar">
+        <input type="range" id="radiusSelector" min="11" max="17">
+        <p id="meterSelectContainer"><span id="meterSelect">800</span> metres</p>
+    </div>
+
+    <div id="bottombar">
+        <div class="floatingButton">
+            <img src="./icons/arrow-right.svg" alt="Arrow">
+        </div>
+    </div>
+
+    <script src="./js/home.js"></script>
+    <script src="./js/map.js"></script>
+</body>
+</html>

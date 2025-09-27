@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitReward - Fitness App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for slider and additional elements */
+        .slider-track {
+            position: relative;
+            background: #e2e8f0;
+            height: 6px;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .slider-fill {
+            background: #3b82f6;
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.2s ease;
+        }
+        
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: #3b82f6;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: left 0.2s ease;
+        }
+        
+        .map-grid {
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .segmented-control button.active {
+            background: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .restaurant-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+    
+    <!-- Home Page -->
+    <div id="homePage" class="relative w-full min-h-screen overflow-hidden">
+        <!-- Map-style background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-green-50 via-blue-50 to-green-100">
+            <!-- Grid pattern to simulate map -->
+            <div class="absolute inset-0 opacity-20 map-grid"></div>
+            
+            <!-- Map-like roads/paths -->
+            <div class="absolute inset-0">
+                <div class="absolute top-1/4 left-0 w-full h-1 bg-gray-300 transform rotate-12 opacity-40"></div>
+                <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-300 transform -rotate-6 opacity-40"></div>
+                <div class="absolute top-3/4 left-0 w-full h-1 bg-gray-300 transform rotate-3 opacity-40"></div>
+                <div class="absolute left-1/4 top-0 h-full w-1 bg-gray-300 transform rotate-12 opacity-40"></div>
+                <div class="absolute left-3/4 top-0 h-full w-1 bg-gray-300 transform -rotate-6 opacity-40"></div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="relative z-10 flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+                <button class="p-2 bg-white/80 backdrop-blur-sm rounded-lg hover:bg-white/90 transition-colors">
+                    <!-- Menu icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="w-10 h-10 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
+                    <!-- User icon -->
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-3 py-2">
+                <!-- Flame icon -->
+                <svg class="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13.5.067l.549 2.191a3.9 3.9 0 003.111 2.92l2.191.549-.549 2.191a3.9 3.9 0 00-2.92 3.111l-.549 2.191-2.191-.549a3.9 3.9 0 00-3.111-2.92L7.5 9.067l.549-2.191A3.9 3.9 0 0010.56 4.01l2.191-.549-.251-.373z"/>
+                </svg>
+                <span class="font-medium" id="streakDisplay">7</span>
+            </div>
+        </div>
+
+        <!-- Center circle with distance selector -->
+        <div class="absolute inset-0 flex items-center justify-center">
+            <div class="flex flex-col items-center gap-6">
+                <!-- Distance circle -->
+                <div class="relative">
+                    <div 
+                        id="distanceCircle"
+                        class="rounded-full bg-blue-500/20 border-4 border-blue-500/40 backdrop-blur-sm flex items-center justify-center transition-all duration-300"
+                        style="width: 155px; height: 155px;"
+                    >
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-700" id="distanceDisplay">2.5</div>
+                            <div class="text-sm text-blue-600">miles</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distance slider -->
+                <div class="w-80 bg-white/80 backdrop-blur-sm rounded-full p-4">
+                    <div class="relative">
+                        <div class="slider-track">
+                            <div class="slider-fill" id="sliderFill" style="width: 42%;"></div>
+                            <div class="slider-thumb" id="sliderThumb" style="left: 42%;"></div>
+                        </div>
+                        <input 
+                            type="range" 
+                            id="distanceSlider" 
+                            min="0.5" 
+                            max="10" 
+                            step="0.5" 
+                            value="2.5"
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        >
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-600 mt-2 px-1">
+                        <span>0.5 mi</span>
+                        <span>10 mi</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next button - bottom right -->
+        <div class="absolute bottom-6 right-6">
+            <button 
+                id="nextBtn"
+                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-colors"
+            >
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- Rewards Page -->
+    <div id="rewardsPage" class="w-full min-h-screen bg-white hidden">
+        <!-- Header with back button -->
+        <div class="flex items-center justify-between p-4 border-b">
+            <button id="backBtn" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <!-- Arrow left icon -->
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <h1 class="font-semibold">Choose Your Reward</h1>
+            <div></div>
+        </div>
+
+        <!-- Segmented Control -->
+        <div class="p-4">
+            <div class="flex bg-gray-100 rounded-lg p-1 max-w-xs segmented-control">
+                <button id="listViewBtn" class="flex-1 py-2 px-4 rounded-md transition-colors active">
+                    List
+                </button>
+                <button id="mapViewBtn" class="flex-1 py-2 px-4 rounded-md transition-colors text-gray-600">
+                    Map
+                </button>
+            </div>
+        </div>
+
+        <!-- Restaurant List - 60% of page -->
+        <div class="flex-1 px-4" style="height: 60vh;">
+            <div id="restaurantList" class="space-y-3 overflow-y-auto h-full">
+                <!-- Restaurant cards will be populated by JavaScript -->
+            </div>
+            
+            <div id="mapView" class="h-full bg-gray-100 rounded-lg flex items-center justify-center hidden">
+                <div class="text-center text-gray-500">
+                    <!-- Map pin icon -->
+                    <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <p>Map view coming soon</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom section -->
+        <div class="p-4 border-t bg-white">
+            <div class="flex items-center justify-between">
+                <div class="flex flex-col">
+                    <span class="text-sm text-gray-600">Potential calories burned:</span>
+                    <span class="text-lg font-semibold text-green-600" id="caloriesDisplay">250 cal</span>
+                </div>
+                <button class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                    Start Workout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentPage = 'home';
+        let selectedDistance = 2.5;
+        let streak = 7;
+        let viewMode = 'list';
+
+        // Restaurant data
+        const restaurants = [
+            {
+                id: '1',
+                name: 'The Green Bowl',
+                cuisine: 'Healthy • Salads',
+                rating: 4.8,
+                distance: '0.3 mi',
+                estimatedTime: '15 min'
+            },
+            {
+                id: '2',
+                name: 'Pizza Corner',
+                cuisine: 'Italian • Pizza',
+                rating: 4.5,
+                distance: '0.5 mi',
+                estimatedTime: '20 min'
+            },
+            {
+                id: '3',
+                name: 'Sushi Zen',
+                cuisine: 'Japanese • Sushi',
+                rating: 4.7,
+                distance: '0.4 mi',
+                estimatedTime: '25 min'
+            },
+            {
+                id: '4',
+                name: 'Burger Palace',
+                cuisine: 'American • Burgers',
+                rating: 4.3,
+                distance: '0.6 mi',
+                estimatedTime: '18 min'
+            },
+            {
+                id: '5',
+                name: 'Taco Fiesta',
+                cuisine: 'Mexican • Tacos',
+                rating: 4.6,
+                distance: '0.7 mi',
+                estimatedTime: '22 min'
+            },
+            {
+                id: '6',
+                name: 'Smoothie Bar',
+                cuisine: 'Drinks • Smoothies',
+                rating: 4.4,
+                distance: '0.2 mi',
+                estimatedTime: '10 min'
+            }
+        ];
+
+        // Utility functions
+        function calculateCaloriesBurned(distance) {
+            return Math.round(distance * 100);
+        }
+
+        function updateDistanceDisplay() {
+            document.getElementById('distanceDisplay').textContent = selectedDistance;
+            
+            // Update circle radius (min 80px, max 200px)
+            const circleRadius = Math.min(200, Math.max(80, selectedDistance * 30));
+            document.getElementById('distanceCircle').style.width = circleRadius + 'px';
+            document.getElementById('distanceCircle').style.height = circleRadius + 'px';
+            
+            // Update slider position
+            const percentage = ((selectedDistance - 0.5) / (10 - 0.5)) * 100;
+            document.getElementById('sliderFill').style.width = percentage + '%';
+            document.getElementById('sliderThumb').style.left = percentage + '%';
+            
+            // Update calories display
+            document.getElementById('caloriesDisplay').textContent = calculateCaloriesBurned(selectedDistance) + ' cal';
+        }
+
+        function createRestaurantCard(restaurant) {
+            return `
+                <div class="restaurant-card bg-white rounded-lg border overflow-hidden transition-shadow cursor-pointer">
+                    <div class="flex">
+                        <!-- Restaurant image placeholder -->
+                        <div class="w-20 h-20 bg-gradient-to-br from-orange-200 to-red-200 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        
+                        <!-- Restaurant info -->
+                        <div class="flex-1 p-3">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="font-semibold text-base">${restaurant.name}</h3>
+                                    <p class="text-sm text-gray-600">${restaurant.cuisine}</p>
+                                    <div class="flex items-center gap-3 mt-1">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-3 h-3 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                            <span class="text-xs">${restaurant.rating}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-xs text-gray-500">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                            <span>${restaurant.distance}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-xs text-gray-500">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span>${restaurant.estimatedTime}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRestaurantList() {
+            const restaurantList = document.getElementById('restaurantList');
+            restaurantList.innerHTML = restaurants.map(createRestaurantCard).join('');
+        }
+
+        function showPage(page) {
+            if (page === 'home') {
+                document.getElementById('homePage').classList.remove('hidden');
+                document.getElementById('rewardsPage').classList.add('hidden');
+            } else {
+                document.getElementById('homePage').classList.add('hidden');
+                document.getElementById('rewardsPage').classList.remove('hidden');
+                renderRestaurantList();
+            }
+            currentPage = page;
+        }
+
+        function toggleViewMode(mode) {
+            viewMode = mode;
+            
+            // Update button states
+            document.getElementById('listViewBtn').classList.toggle('active', mode === 'list');
+            document.getElementById('listViewBtn').classList.toggle('text-gray-600', mode !== 'list');
+            document.getElementById('mapViewBtn').classList.toggle('active', mode === 'map');
+            document.getElementById('mapViewBtn').classList.toggle('text-gray-600', mode !== 'map');
+            
+            // Show/hide views
+            document.getElementById('restaurantList').classList.toggle('hidden', mode !== 'list');
+            document.getElementById('mapView').classList.toggle('hidden', mode !== 'map');
+        }
+
+        // Event listeners
+        document.getElementById('distanceSlider').addEventListener('input', function(e) {
+            selectedDistance = parseFloat(e.target.value);
+            updateDistanceDisplay();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            showPage('rewards');
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function() {
+            showPage('home');
+        });
+
+        document.getElementById('listViewBtn').addEventListener('click', function() {
+            toggleViewMode('list');
+        });
+
+        document.getElementById('mapViewBtn').addEventListener('click', function() {
+            toggleViewMode('map');
+        });
+
+        // Initialize the app
+        updateDistanceDisplay();
+        showPage('home');
+    </script>
+</body>
+</html>
