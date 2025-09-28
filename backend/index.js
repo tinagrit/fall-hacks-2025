@@ -53,10 +53,6 @@ app.post("/suggest-route", async (req, res) => {
       return isRestaurant;
     });
 
-    if (onlyRestaurants.length === 0) {
-      return res.json({ "restaurants": [] });
-    }
-
     // Step 3: For each restaurant, get walking distance
     const withDistance = [];
     for (const r of onlyRestaurants) {
