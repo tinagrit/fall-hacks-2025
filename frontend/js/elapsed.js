@@ -59,7 +59,7 @@ if (searchParams.get("dest")) {
     dest = searchParams.get("dest")
 }
 
-document.querySelector('iframe').src = "https://www.google.com/maps/embed/v1/directions?key=&origin="+origin+"&destination="+dest+"&avoid=tolls|highways&mode=walking"
+document.querySelector('iframe').src = "https://www.google.com/maps/embed/v1/directions?key=AIzaSyAvrPln8bIskq7AtRZnzvWvTaczeiTXu38&origin="+origin+"&destination="+dest+"&avoid=tolls|highways&mode=walking"
 
 document.getElementById('distance').innerHTML = Number(searchParams.get('distance'));
 distance =  Number(searchParams.get('distance'));

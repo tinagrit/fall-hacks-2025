@@ -3,3 +3,4 @@ app.json
 core-plugins.json
 backend/.env
 node_modules/
+.DS_Store
