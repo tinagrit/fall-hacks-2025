@@ -1,5 +1,6 @@
 body {
     background-color: #F5F5DC;
+    margin: 0;
 }
 
 * {
@@ -18,4 +19,83 @@ body {
 #countdown {
     font-size: 80px;
     text-align: center;
+}
+
+iframe {
+    display: block;
+    width: 100%;
+    height: 55vh;
+    margin: 0 auto;
+}
+
+#elapsed {
+    text-align: center;
+    font-family: monospace;
+    font-size: 30px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #FFFFFF;
+}
+
+
+
+
+#topbar {
+    background-color: #255C99;
+    color: #FFFFFF;
+    box-sizing: border-box;
+}
+
+#topbar h1, #topbar p {
+    margin: 0;
+}
+
+#topbar h1 {
+    padding-top: 35px;
+}
+
+#topbar .bottomOfTopContainer {
+    display: flex;
+}
+
+#topbar .bottomOfTopContainer .item {
+    width: 50%;
+    text-align: center;
+}
+
+#topbar .bottomOfTopContainer .item:not(:last-child) {
+    border-right: 1px solid #FFFFFF;
+}
+
+#topbar .bottomOfTopContainer .item .desc {
+    padding-top: 12px;
+}
+
+#topbar .bottomOfTopContainer .item .val {
+    font-weight: bold;
+    font-size: 25px;
+    padding-bottom: 12px;
+}
+
+
+
+
+#bottombar {
+    display: flex;
+    gap: 15px;
+    margin: 25px 20px 0 20px;
+}
+
+#bottombar .button {
+    width: 50%;
+    font-size: 20px;
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+#bottombar .button#cancelButton {
+    background-color: #d1d1d1;
+    color: black;
 }

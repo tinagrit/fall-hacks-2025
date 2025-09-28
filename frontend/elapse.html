@@ -12,7 +12,31 @@
         <h1 id="countdown">3</h1>
     </div>
     
-    <h1 id="elapsed"></h1>
+    <div id="topbar">
+        <h1 id="elapsed"></h1>
+        <div class="bottomOfTopContainer">
+            <div class="item">
+                <p class="desc">Distance</p>
+                <p id="distance" class="val">0.00 m</p>
+            </div>
+            <div class="item">
+                <div class="desc">Calories</div>
+                <div id="calories" class="val">0</div>
+            </div>
+        </div>
+    </div>
+
+
+    <iframe
+    frameborder="0" style="border:0"
+    referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+
+
+    <div id="bottombar">
+        <div id="cancelButton" class="button">Cancel</div>
+        <div id="finishButton" class="button">Finish</div>
+    </div>
 
     <script src="./js/elapsed.js"></script>
 </body>
