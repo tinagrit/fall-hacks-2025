@@ -43,6 +43,7 @@ app.post("/suggest-route", async (req, res) => {
         },
       }
     );
+    console.log(placesResp);
 
     // Step 2: Keep only valid restaurants/cafes/food
     let onlyRestaurants = placesResp.data.results.filter(place =>
