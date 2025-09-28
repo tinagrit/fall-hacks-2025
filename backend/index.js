@@ -46,9 +46,12 @@ app.post("/suggest-route", async (req, res) => {
 
     // Step 2: Keep only valid restaurants/cafes/food
     let onlyRestaurants = placesResp.data.results.filter(place => {
-      place.types?.some(t => ["restaurant", "cafe", "food"].includes(t));   
+      const isRestaurant = place.types?.some(t =>
+        ["restaurant", "cafe", "food"].includes(t)
+      );
+      console.log(place.name, place.types, "=>", isRestaurant);
+      return isRestaurant;
     });
-    console.log(onlyRestaurants.length);
 
     if (onlyRestaurants.length === 0) {
       return res.json({ "restaurants": [] });
