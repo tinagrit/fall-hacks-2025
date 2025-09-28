@@ -185,8 +185,8 @@ function chooseThisRes(element, thiscoord, howfar) {
 
 
 
-origin = center.lat+","+center.lng;
 
 document.getElementById('startButton').addEventListener('click',()=> {
+    origin = center.lat+","+center.lng;
     window.location = 'elapse.html?origin='+origin+'&dest='+dest+'&distance='+fromRest;
 })
