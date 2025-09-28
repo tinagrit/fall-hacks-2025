@@ -25,7 +25,7 @@ app.post("/suggest-route", async (req, res) => {
 
     lastStart = { lat: startLat, lng: startLng }; // save start location
 
-    // Step 1: Find restaurants nearby
+    // Step 1: Find restaurants within the radius
     const placesResp = await axios.get(
       "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
       {
@@ -33,22 +33,23 @@ app.post("/suggest-route", async (req, res) => {
           location: `${startLat},${startLng}`,
           radius: range,
           type: "restaurant",
-          keyword: "restaurant",
           key: GOOGLE_API_KEY,
         },
       }
     );
 
-    // Step 2: Filter to only actual restaurants
-    const onlyRestaurants = placesResp.data.results.filter(place =>
-      place.types?.includes("restaurant")
+    // Step 2: Keep only valid restaurants/cafes/food
+    let onlyRestaurants = placesResp.data.results.filter(place =>
+      place.types?.some(t => ["restaurant", "cafe", "food"].includes(t))
     );
 
-    const selectedRestaurants = onlyRestaurants.slice(0, 8);
+    if (onlyRestaurants.length === 0) {
+      return res.json({ onlyRestaurants });
+    }
 
     // Step 3: For each restaurant, get walking distance
-    const finalList = [];
-    for (const r of selectedRestaurants) {
+    const withDistance = [];
+    for (const r of onlyRestaurants) {
       const directionsResp = await axios.get(
         "https://maps.googleapis.com/maps/api/directions/json",
         {
@@ -65,20 +66,32 @@ app.post("/suggest-route", async (req, res) => {
       if (!route) continue;
 
       const leg = route.legs[0];
-      finalList.push({
+      withDistance.push({
         name: r.name,
         distance_meters: leg.distance.value,
         coord: `${r.geometry.location.lat}, ${r.geometry.location.lng}`
       });
     }
 
-    lastRestaurants = selectedRestaurants; // save full objects for /select-restaurant
+    // Step 4: Sort so closest-to-range come first (prefer edge of circle)
+    withDistance.sort((a, b) => {
+      const da = Math.abs(a.distance_meters - range);
+      const db = Math.abs(b.distance_meters - range);
+      return da - db;
+    });
+
+    // Step 5: Pick top 8
+    const finalList = withDistance.slice(0, 8);
+
+    lastRestaurants = onlyRestaurants; // store full objects for /select-restaurant
     res.json({ restaurants: finalList });
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({ error: "something went wrong" });
   }
 });
+
+
 
 // // --- Select Restaurant Endpoint ---
 // app.post("/select-restaurant", async (req, res) => {
