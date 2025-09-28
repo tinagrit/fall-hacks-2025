@@ -2,9 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const serverless = require("serverless-http");
 const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({
+  origin: "https://bigbackrun.tinagrit.com",
+}));
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
