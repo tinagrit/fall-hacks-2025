@@ -81,6 +81,7 @@ app.post("/suggest-route", async (req, res) => {
       finalList.push({
         name: r.name,
         distance_meters: leg.distance.value,
+        coord: `${r.geometry.location.lat}, ${r.geometry.location.lng}`
       });
     }
 
@@ -92,62 +93,62 @@ app.post("/suggest-route", async (req, res) => {
   }
 });
 
-// --- Select Restaurant Endpoint ---
-app.post("/select-restaurant", async (req, res) => {
-  try {
-    // Safety check for empty body
-    if (!req.body || typeof req.body !== "object") {
-      return res.status(400).json({ error: "Request body must be JSON with an 'index' field" });
-    }
+// // --- Select Restaurant Endpoint ---
+// app.post("/select-restaurant", async (req, res) => {
+//   try {
+//     // Safety check for empty body
+//     if (!req.body || typeof req.body !== "object") {
+//       return res.status(400).json({ error: "Request body must be JSON with an 'index' field" });
+//     }
 
-    const { index } = req.body;
+//     const { index } = req.body;
 
-    if (index === undefined || index < 0 || index >= lastRestaurants.length) {
-      return res.status(400).json({ error: "Invalid index" });
-    }
+//     if (index === undefined || index < 0 || index >= lastRestaurants.length) {
+//       return res.status(400).json({ error: "Invalid index" });
+//     }
 
-    const chosen = lastRestaurants[index];
+//     const chosen = lastRestaurants[index];
 
-    // Fetch directions to selected restaurant
-    const directionsResp = await axios.get(
-      "https://maps.googleapis.com/maps/api/directions/json",
-      {
-        params: {
-          origin: `${lastStart.lat},${lastStart.lng}`,
-          destination: `${chosen.geometry.location.lat},${chosen.geometry.location.lng}`,
-          mode: "walking",
-          key: GOOGLE_API_KEY,
-        },
-      }
-    );
+//     // Fetch directions to selected restaurant
+//     const directionsResp = await axios.get(
+//       "https://maps.googleapis.com/maps/api/directions/json",
+//       {
+//         params: {
+//           origin: `${lastStart.lat},${lastStart.lng}`,
+//           destination: `${chosen.geometry.location.lat},${chosen.geometry.location.lng}`,
+//           mode: "walking",
+//           key: GOOGLE_API_KEY,
+//         },
+//       }
+//     );
 
-    const route = directionsResp.data.routes[0];
-    if (!route) return res.status(500).json({ error: "No route found" });
+//     const route = directionsResp.data.routes[0];
+//     if (!route) return res.status(500).json({ error: "No route found" });
 
-    const leg = route.legs[0];
-    const distanceMeters = leg.distance.value;
-    const durationMin = Math.round(leg.duration.value / 60);
-    const calories = Math.round(distanceMeters / 1609.34 * 100); // ~100 kcal per mile
+//     const leg = route.legs[0];
+//     const distanceMeters = leg.distance.value;
+//     const durationMin = Math.round(leg.duration.value / 60);
+//     const calories = Math.round(distanceMeters / 1609.34 * 100); // ~100 kcal per mile
 
-    res.json({
-      restaurant: {
-        name: chosen.name,
-        foodtype: chosen.types || [],
-        coordinates: chosen.geometry.location,
-      },
-      route: {
-        distance_meters: distanceMeters,
-        estimated_time_min: durationMin,
-        estimated_calories: calories,
-        maps_url: `https://www.google.com/maps/dir/?api=1&origin=${lastStart.lat},${lastStart.lng}&destination=${chosen.geometry.location.lat},${chosen.geometry.location.lng}&travelmode=walking`
-      }
-    });
+//     res.json({
+//       restaurant: {
+//         name: chosen.name,
+//         foodtype: chosen.types || [],
+//         coordinates: chosen.geometry.location,
+//       },
+//       route: {
+//         distance_meters: distanceMeters,
+//         estimated_time_min: durationMin,
+//         estimated_calories: calories,
+//         maps_url: `https://www.google.com/maps/dir/?api=1&origin=${lastStart.lat},${lastStart.lng}&destination=${chosen.geometry.location.lat},${chosen.geometry.location.lng}&travelmode=walking`
+//       }
+//     });
 
-  } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ error: "something went wrong" });
-  }
-});
+//   } catch (err) {
+//     console.error(err.response?.data || err.message);
+//     res.status(500).json({ error: "something went wrong" });
+//   }
+// });
 
 // --- Start server ---
 const PORT = process.env.PORT || 3000;
