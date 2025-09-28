@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const serverless = require("serverless-http");
 const axios = require("axios");
 
 const app = express();
@@ -151,7 +152,9 @@ app.post("/suggest-route", async (req, res) => {
 // });
 
 // --- Start server ---
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
+module.exports = app;
+module.exports.handler = serverless(app);

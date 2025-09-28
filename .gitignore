@@ -2,3 +2,4 @@ workspace.json
 app.json
 core-plugins.json
 backend/.env
+node_modules/
