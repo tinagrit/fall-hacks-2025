@@ -49,7 +49,6 @@ app.post("/suggest-route", async (req, res) => {
       const isRestaurant = place.types?.some(t =>
         ["restaurant", "cafe", "food"].includes(t)
       );
-      console.log(place.name, place.types, "=>", isRestaurant);
       return isRestaurant;
     });
 
