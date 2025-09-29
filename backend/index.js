@@ -67,10 +67,17 @@ app.post("/suggest-route", async (req, res) => {
         }
       );
 
-      const route = directionsResp.data.routes[0];
-      if (!route) continue;
+      let distancevalue;
+      if (directionsResp.data.status !== "OK" || !directionsResp.data.routes?.length) {
+        distancevalue = range;
+      } else {
+        let route = directionsResp.data.routes[0];
+        if (!route) continue;
 
-      const leg = route.legs[0];
+        let leg = route.legs[0];
+        distancevalue = leg.distance.value;
+      }
+  
       withDistance.push({
         name: r.name,
         distance_meters: leg.distance.value,
