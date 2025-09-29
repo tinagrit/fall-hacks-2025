@@ -82,15 +82,6 @@ let restaurants;
 let fromRest;
 
 document.getElementById('firstNext').addEventListener('click',()=> {
-    document.getElementById('topbar').style.opacity = 0;
-    document.getElementById('middlebar').style.opacity = 0;
-    document.getElementById('bottombar').style.opacity = 0;
-    document.getElementById('mainCircle').style.opacity = 0.1;
-
-    document.getElementById('topmenu').style.top = 0;
-    document.getElementById('bottommenu').style.bottom = 0;
-    document.getElementById('map').style.pointerEvents = 'none';
-
 
     let data = {
         "lat": center.lat,
@@ -100,6 +91,7 @@ document.getElementById('firstNext').addEventListener('click',()=> {
 
     document.getElementById('potential').innerHTML = Math.round((0.0625 * meters) * 100) / 100;
 
+    document.querySelector('#bottombar .floatingButton').classList.add('active');
 
     fetch("https://fallhacks.api.tinagrit.com/suggest-route", {
     method: "POST",
@@ -115,6 +107,14 @@ document.getElementById('firstNext').addEventListener('click',()=> {
     console.log("Response JSON:", json);
     restaurants = json.restaurants
 
+    document.getElementById('topbar').style.opacity = 0;
+    document.getElementById('middlebar').style.opacity = 0;
+    document.getElementById('bottombar').style.opacity = 0;
+    document.getElementById('mainCircle').style.opacity = 0.1;
+
+    document.getElementById('topmenu').style.top = 0;
+    document.getElementById('bottommenu').style.bottom = 0;
+    document.getElementById('map').style.pointerEvents = 'none';
 
     restaurants.forEach(rest => {
         
@@ -166,6 +166,10 @@ document.getElementById('secondLeft').addEventListener('click',()=> {
     document.getElementById('mainCircle').style.opacity = 0.2;
 
     document.getElementById('lister').style.display = 'none';
+
+    if (document.querySelector('#bottombar .floatingButton').classList.contains('active')) {
+        document.querySelector('#bottombar .floatingButton').classList.remove('active');
+    }
 
     document.getElementById('topmenu').style.top = '-110px';
     document.getElementById('bottommenu').style.bottom = '-100px';
