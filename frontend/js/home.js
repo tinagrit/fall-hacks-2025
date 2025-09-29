@@ -101,7 +101,7 @@ document.getElementById('firstNext').addEventListener('click',()=> {
     document.getElementById('potential').innerHTML = Math.round((0.0625 * meters) * 100) / 100;
 
 
-    fetch("https://fall-hacks-2025-alpha.vercel.app/suggest-route", {
+    fetch("https://fallhacks.api.tinagrit.com/suggest-route", {
     method: "POST",
     headers: {'Content-Type': 'application/json'}, 
     body: JSON.stringify(data)
