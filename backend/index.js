@@ -80,7 +80,7 @@ app.post("/suggest-route", async (req, res) => {
   
       withDistance.push({
         name: r.name,
-        distance_meters: leg.distance.value,
+        distance_meters: distancevalue,
         coord: `${r.geometry.location.lat}, ${r.geometry.location.lng}`
       });
     }
